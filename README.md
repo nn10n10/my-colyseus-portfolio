@@ -1,6 +1,10 @@
+[日本語](#japanese) | [English](#english)
+
+<div id="japanese">
+
 # 🎮 Colyseus on AWS: 本番環境レベルの IaC / CI/CD ポートフォリオ
 
-## 1. プロジェクト概要 (Project Overview)
+## 1. プロジェクト概要 
 
 このプロジェクトは、リアルタイム多人数参加型ゲームサーバーである **[Colyseus](https://www.colyseus.io/)** を、  
 **AWS クラウド上で本番環境レベルの品質で稼働** させることを目的とした個人ポートフォリオです。
@@ -11,7 +15,7 @@
 
 ---
 
-## 2. 目標アーキテクチャ (Target Architecture)
+## 2. 目標アーキテクチャ 
 
 以下は本プロジェクトが最終的に目指すシステムの全体構成図です。  
 ユーザーリクエストの入口からデータストレージまで、多層防御と Multi-AZ による高可用性を考慮した設計です。
@@ -50,9 +54,7 @@ graph TD
     H -->|logging| K
     H -->|On Start| L
     
-    
-    %% 3. 修正后的分层分组 (Subgraphs)
-    
+        
     subgraph Supporting Services
         K
         L
@@ -77,7 +79,7 @@ graph TD
     end
 ```
 
-## 3. 技術スタック (Technology Stack)
+## 3. 技術スタック 
 
 | カテゴリ | 技術 | 目的 |
 |----------|------|------|
@@ -94,7 +96,7 @@ graph TD
 
 ---
 
-## 4. プロジェクトロードマップ (Project Roadmap)
+## 4. プロジェクトロードマップ  
 
 本プロジェクトは、以下の 4 つのフェーズで段階的に構築を進めています。
 
@@ -138,7 +140,7 @@ graph TD
 
 ---
 
-## 5. 現在の進捗 (Current Progress)
+## 5. 現在の進捗 
 
 **フェーズ1は完了済み**です。
 
@@ -155,3 +157,159 @@ graph TD
 3. CloudWatch ログや Secrets Manager の基本連携を組み込む。
 
 ---
+
+</div>
+
+<div id="english">
+
+# 🎮 Colyseus on AWS: Production-Grade IaC / CI/CD Portfolio
+
+## 1. Project Overview
+
+This is a personal portfolio project aimed at running the real-time multiplayer game server **[Colyseus](https://www.colyseus.io/)** on the **AWS cloud with production-level quality**.
+
+By fully adopting **Infrastructure as Code (Terraform)** and **CI/CD (GitHub Actions)** practices, this project demonstrates the process of building a **reproducible and automated cloud-native system** that is highly available, scalable, secure, and cost-effective.
+
+---
+
+## 2. Target Architecture
+
+The following is the overall architecture diagram that this project aims to achieve.
+It is designed with multi-layered defense and high availability through Multi-AZ, from user requests to data storage.
+
+```mermaid
+graph TD
+    A((User / Game Client))
+    B[🛡AWS WAF & Shield<br>DDoS & Attack Protection]
+    C[CloudFront CDN]
+    D[(S3 Bucket)]
+    
+    E[Application Load Balancer]
+    F[Security Group]
+    G[ECS Service<br>Auto Scaling Group]
+    H[Fargate Task<br>Colyseus Container]
+    
+    I[(ElastiCache for Redis)]
+    J[(DynamoDB)]
+    
+    K[CloudWatch<br>Logs, Metrics, Alarms]
+    L[Secrets Manager]
+    M[IAM Roles]
+    
+    
+    A -->|Request| B
+    B --> C
+    C --o|Static Assets| D
+    C -->|Dynamic Traffic| E
+    E -->|Forwards Traffic| F
+    F -->|Allows Traffic| G
+    G --> H
+    H <-->|State Sync| I
+    H -->|Data I/O| J
+    H -->|logging| K
+    H -->|On Start| L
+    
+        
+    subgraph Supporting Services
+        K
+        L
+        M
+    end
+
+    subgraph VPC - Virtual Private Cloud
+        
+        subgraph Public Subnets Multi-AZ
+            E
+            F
+        end
+        
+        subgraph Private Subnets Multi-AZ
+            G
+            H
+            I
+            J
+        end
+        
+    end
+```
+
+## 3. Technology Stack
+
+| Category | Technology | Purpose |
+|----------|------|------|
+| Cloud | **AWS (Amazon Web Services)** | Main cloud platform |
+| Container | **Docker**, **Amazon ECR** | Application packaging and registry |
+| Orchestration | **Amazon ECS on AWS Fargate** | Serverless container execution environment |
+| IaC | **Terraform** | Declarative management of infrastructure as code |
+| CI/CD | **GitHub Actions** | Automation of build, test, and deploy |
+| Network | **VPC**, **ALB**, **CloudFront**, **WAF** | Highly available traffic management and security |
+| Datastore | **ElastiCache (Redis)**, **DynamoDB** | State synchronization and persistent data storage |
+| Monitoring | **Amazon CloudWatch** | Logs, metrics, and alarms |
+| Security | **IAM**, **Secrets Manager** | Permissions and secrets management |
+| Application | **Colyseus (Node.js, TypeScript)** | Real-time communication server |
+
+---
+
+## 4. Project Roadmap
+
+This project is being built in the following four phases.
+
+### Phase 1: Local Execution and Manual Deployment
+- [x] Containerize the Colyseus application (Docker)
+- [x] Build Docker image and push to ECR
+- [x] Manual deployment verification on the AWS console
+
+**Objective:**
+To confirm the application's operation and understand the basic elements for running containers in the cloud.
+
+---
+
+### Phase 2: Infrastructure as Code with Terraform (IaC)
+- [ ] Code the network infrastructure such as VPC, subnets, and route tables
+- [ ] Code the ECS cluster, task definitions, and services
+- [ ] Automate infrastructure creation with `terraform apply`
+
+**Objective:**
+To eliminate manual operations and manage a reproducible and consistent infrastructure with code.
+
+---
+
+### Phase 3: Integration of Data and Network Layers
+- [ ] Add ElastiCache (Redis) and DynamoDB
+- [ ] Introduce Application Load Balancer (ALB)
+- [ ] Precise access control with security groups
+
+**Objective:**
+To integrate the state management and persistent data layers, and build a full-fledged backend with a secure public endpoint.
+
+---
+
+### Phase 4: Building the CI/CD Pipeline and Finalization
+- [ ] Create GitHub Actions workflow
+- [ ] Securely configure AWS authentication with OIDC
+- [ ] Fully automate the process from build to deployment triggered by `git push`
+
+**Objective:**
+To automate the process from development to production release, enabling rapid iteration.
+
+---
+
+## 5. Current Progress
+
+**Phase 1 is complete.**
+
+- The Colyseus application has been successfully packaged as a **Docker container**.
+- The built image is securely stored in a **private Amazon ECR repository**.
+- This completes the standardization of the execution environment, and it is ready to run anywhere in the cloud in the same way.
+
+**Current Work:** In progress with Phase 2 (Infrastructure as Code with Terraform).
+- Priority tasks include: Modularizing the network (VPC / subnets) and ECS cluster with Terraform, designing state management (remote state), and introducing Terraform best practices.
+
+**Next Steps (Short-term):**
+1. Create the initial set of Terraform modules (VPC, subnets, security groups).
+2. Define the task definitions and services for ECS / Fargate with Terraform and verify integration with ECR.
+3. Incorporate basic integration with CloudWatch Logs and Secrets Manager.
+
+---
+
+</div>
