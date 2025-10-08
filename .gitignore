@@ -1,0 +1,14 @@
+# Terraform apecific files
+**/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Node.js dependencies
+**/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDE and OS specific files
+.DS_Store
+.vscode/
