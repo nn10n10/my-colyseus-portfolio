@@ -111,9 +111,9 @@ graph TD
 ---
 
 ###  フェーズ2：Terraform によるインフラのコード化 (IaC)
-- [ ] VPC、サブネット、ルートテーブル等のネットワーク基盤のコード化  
-- [ ] ECS クラスター、タスク定義、サービスのコード化  
-- [ ] `terraform apply` によるインフラの自動構築  
+- [x] VPC、サブネット、ルートテーブル等のネットワーク基盤のコード化  
+- [x] ECS クラスター、タスク定義、サービスのコード化  
+- [x] `terraform apply` によるインフラの自動構築  
 
 **目的:**  
 手動操作を排除し、再現可能で一貫性のあるインフラをコードで管理する。
@@ -148,13 +148,19 @@ graph TD
 - ビルドされたイメージは **プライベートな Amazon ECR リポジトリ** に安全に保管済み。  
 - これにより、実行環境の標準化が完了し、クラウド上のどこでも同じように動作させる準備が整いました。
 
-**現在の作業:** フェーズ2（Terraform によるインフラのコード化）に着手中。  
-- 優先タスク例: ネットワーク（VPC / サブネット）と ECS クラスタの Terraform モジュール化、状態管理（remote state）の設計、Terraform のベストプラクティス導入。
+**フェーズ2は完了済み**です。
 
-**次のステップ（短期）:**  
-1. Terraform モジュールの初期セット（VPC、サブネット、セキュリティグループ）を作成する。  
-2. ECS / Fargate 用のタスク定義とサービスを Terraform で定義し、ECR との連携を検証する。  
-3. CloudWatch ログや Secrets Manager の基本連携を組み込む。
+- **VPC、サブネット、ルートテーブル**等のネットワーク基盤をTerraformでコード化済み。
+- **ECS クラスター、タスク定義、サービス**のインフラ構成をコードで管理済み。
+- `terraform apply`による**インフラの自動構築**が実行可能となり、手動操作を排除した再現可能な環境を構築済み。
+
+**現在の作業:** フェーズ3（データ層とネットワーク層の統合）の準備を開始。
+- 優先タスク例: ElastiCache (Redis) と DynamoDB の追加、Application Load Balancer (ALB) の導入、セキュリティグループによる精密なアクセスコントロールの実装。
+
+**次のステップ（短期）:**
+1. ElastiCache (Redis) クラスターを追加し、Colyseus の状態管理に統合する。
+2. DynamoDB テーブルを作成し、永続化データストレージを実装する。
+3. Application Load Balancer を導入し、安全な公開エンドポイントを構築する。
 
 ---
 
@@ -265,9 +271,9 @@ To confirm the application's operation and understand the basic elements for run
 ---
 
 ### Phase 2: Infrastructure as Code with Terraform (IaC)
-- [ ] Code the network infrastructure such as VPC, subnets, and route tables
-- [ ] Code the ECS cluster, task definitions, and services
-- [ ] Automate infrastructure creation with `terraform apply`
+- [x] Code the network infrastructure such as VPC, subnets, and route tables
+- [x] Code the ECS cluster, task definitions, and services
+- [x] Automate infrastructure creation with `terraform apply`
 
 **Objective:**
 To eliminate manual operations and manage a reproducible and consistent infrastructure with code.
@@ -302,13 +308,19 @@ To automate the process from development to production release, enabling rapid i
 - The built image is securely stored in a **private Amazon ECR repository**.
 - This completes the standardization of the execution environment, and it is ready to run anywhere in the cloud in the same way.
 
-**Current Work:** In progress with Phase 2 (Infrastructure as Code with Terraform).
-- Priority tasks include: Modularizing the network (VPC / subnets) and ECS cluster with Terraform, designing state management (remote state), and introducing Terraform best practices.
+**Phase 2 is complete.**
+
+- **Network infrastructure** such as VPC, subnets, and route tables has been coded with Terraform.
+- **ECS cluster, task definitions, and services** infrastructure is managed with code.
+- **Automated infrastructure creation** with `terraform apply` is now possible, enabling reproducible environments without manual operations.
+
+**Current Work:** Preparing to start Phase 3 (Integration of Data and Network Layers).
+- Priority tasks include: Adding ElastiCache (Redis) and DynamoDB, introducing Application Load Balancer (ALB), and implementing precise access control with security groups.
 
 **Next Steps (Short-term):**
-1. Create the initial set of Terraform modules (VPC, subnets, security groups).
-2. Define the task definitions and services for ECS / Fargate with Terraform and verify integration with ECR.
-3. Incorporate basic integration with CloudWatch Logs and Secrets Manager.
+1. Add ElastiCache (Redis) cluster and integrate with Colyseus for state management.
+2. Create DynamoDB tables and implement persistent data storage.
+3. Introduce Application Load Balancer and build secure public endpoints.
 
 ---
 
