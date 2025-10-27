@@ -41,7 +41,8 @@ resource "aws_vpc_endpoint" "s3" {
   service_name = "com.amazonaws.ap-northeast-1.s3"
   vpc_endpoint_type = "Gateway"
   # 将这个端点关联到私有子网的路由表上
-  # (需要为私有子网也创建一个路由表)
+ # 告诉S3端点，去更新我们私有子网的路由表
+  route_table_ids = [aws_route_table.private.id]
 }
 
 # 需要为私有子网也创建路由表并关联
@@ -60,4 +61,21 @@ resource "aws_route_table_association" "private_a" {
 resource "aws_route_table_association" "private_c" {
   subnet_id      = aws_subnet.private_c.id
   route_table_id = aws_route_table.private.id
+}
+
+# -------------------------------------------------
+# 4. CloudWatch Logs 接口端点 (用于发送日志)
+# -------------------------------------------------
+# 这是解决 "cannot find the Amazon CloudWatch log group" 错误的关键
+resource "aws_vpc_endpoint" "cloudwatch_logs" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.ap-northeast-1.logs"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+
+  # 将这个端点也部署在我们的私有子网中
+  subnet_ids          = [aws_subnet.private_a.id, aws_subnet.private_c.id]
+
+  # 重用我们为端点创建的同一个安全组
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
 }
