@@ -85,6 +85,41 @@ resource "aws_ecs_task_definition" "colyseus_app" {
           hostPort      = 2567
         }
       ],
+      # Phase 3 环境变量配置
+      environment = [
+        {
+          name  = "AWS_REGION",
+          value = "ap-northeast-1"
+        },
+        {
+          name  = "REDIS_HOST",
+          value = aws_elasticache_replication_group.main.primary_endpoint_address
+        },
+        {
+          name  = "REDIS_PORT",
+          value = "6379"
+        },
+        {
+          name  = "USERS_TABLE",
+          value = aws_dynamodb_table.users.name
+        },
+        {
+          name  = "GAME_SESSIONS_TABLE",
+          value = aws_dynamodb_table.game_sessions.name
+        },
+        {
+          name  = "GAME_HISTORY_TABLE",
+          value = aws_dynamodb_table.game_history.name
+        },
+        {
+          name  = "PORT",
+          value = "2567"
+        },
+        {
+          name  = "NODE_ENV",
+          value = "production"
+        }
+      ],
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -134,8 +169,19 @@ resource "aws_ecs_service" "main" {
     security_groups = [aws_security_group.ecs_service.id]
   }
 
+  # Load Balancer integration
+  load_balancer {
+    target_group_arn = aws_lb_target_group.main.arn
+    container_name   = "colyseus-app-container"
+    container_port   = 2567
+  }
+
   # 忽略任务定义的小版本变更，以便CI/CD可以平滑更新
   lifecycle {
     ignore_changes = [task_definition]
   }
+
+  depends_on = [
+    aws_lb_listener.main
+  ]
 }
