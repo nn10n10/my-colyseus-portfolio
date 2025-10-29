@@ -121,9 +121,9 @@ graph TD
 ---
 
 ###  フェーズ3：データ層とネットワーク層の統合
-- [ ] ElastiCache (Redis) と DynamoDB の追加  
-- [ ] Application Load Balancer (ALB) の導入  
-- [ ] セキュリティグループによる精密なアクセスコントロール  
+- [x] ElastiCache (Redis) と DynamoDB の追加  
+- [x] Application Load Balancer (ALB) の導入  
+- [x] セキュリティグループによる精密なアクセスコントロール  
 
 **目的:**  
 状態管理と永続化データ層を統合し、安全な公開エンドポイントを持つ本格的なバックエンドを構築する。
@@ -142,25 +142,19 @@ graph TD
 
 ## 5. 現在の進捗 
 
-**フェーズ1は完了済み**です。
+**フェーズ1、2、3は完了済み**です。
 
-- Colyseus アプリケーションを **Docker コンテナ** として正常にパッケージ化済み。  
-- ビルドされたイメージは **プライベートな Amazon ECR リポジトリ** に安全に保管済み。  
-- これにより、実行環境の標準化が完了し、クラウド上のどこでも同じように動作させる準備が整いました。
+- **コンテナ化、IaCによるインフラ構築**に加え、**データ層とネットワーク層の統合**が完了しました。
+- **ElastiCache (Redis)** による状態管理、**DynamoDB** による永続化、そして **ALB** 経由での安全なトラフィックルーティングが実現されています。
+- これにより、スケーラブルで高可用性なバックエンドシステムの基礎が完成しました。
 
-**フェーズ2は完了済み**です。
-
-- **VPC、サブネット、ルートテーブル**等のネットワーク基盤をTerraformでコード化済み。
-- **ECS クラスター、タスク定義、サービス**のインフラ構成をコードで管理済み。
-- `terraform apply`による**インフラの自動構築**が実行可能となり、手動操作を排除した再現可能な環境を構築済み。
-
-**現在の作業:** フェーズ3（データ層とネットワーク層の統合）の準備を開始。
-- 優先タスク例: ElastiCache (Redis) と DynamoDB の追加、Application Load Balancer (ALB) の導入、セキュリティグループによる精密なアクセスコントロールの実装。
+**現在の作業:** フェーズ4（CI/CD パイプラインの構築）の準備を開始。
+- 優先タスク例: GitHub Actions ワークフローの作成、OIDCによるAWS認証のセキュアな設定、`git push`をトリガーとしたビルドからデプロイまでの完全自動化。
 
 **次のステップ（短期）:**
-1. ElastiCache (Redis) クラスターを追加し、Colyseus の状態管理に統合する。
-2. DynamoDB テーブルを作成し、永続化データストレージを実装する。
-3. Application Load Balancer を導入し、安全な公開エンドポイントを構築する。
+1. GitHub Actions ワークフローを作成し、OIDC を用いたセキュアな AWS 認証を設定する。
+2. アプリケーションのビルド、テスト、Docker イメージのプッシュを自動化する。
+3. `main` ブランチへのマージをトリガーに、Terraform の適用と ECS サービスの更新が自動的に行われるパイプラインを構築する。
 
 ---
 
@@ -281,9 +275,9 @@ To eliminate manual operations and manage a reproducible and consistent infrastr
 ---
 
 ### Phase 3: Integration of Data and Network Layers
-- [ ] Add ElastiCache (Redis) and DynamoDB
-- [ ] Introduce Application Load Balancer (ALB)
-- [ ] Precise access control with security groups
+- [x] Add ElastiCache (Redis) and DynamoDB
+- [x] Introduce Application Load Balancer (ALB)
+- [x] Precise access control with security groups
 
 **Objective:**
 To integrate the state management and persistent data layers, and build a full-fledged backend with a secure public endpoint.
@@ -302,25 +296,19 @@ To automate the process from development to production release, enabling rapid i
 
 ## 5. Current Progress
 
-**Phase 1 is complete.**
+**Phases 1, 2, and 3 are complete.**
 
-- The Colyseus application has been successfully packaged as a **Docker container**.
-- The built image is securely stored in a **private Amazon ECR repository**.
-- This completes the standardization of the execution environment, and it is ready to run anywhere in the cloud in the same way.
+- In addition to **containerization and IaC-based infrastructure provisioning**, the **data and network layers have been integrated**.
+- State management via **ElastiCache (Redis)**, persistence with **DynamoDB**, and secure traffic routing through an **ALB** are now implemented.
+- This establishes the foundation for a scalable and highly available backend system.
 
-**Phase 2 is complete.**
-
-- **Network infrastructure** such as VPC, subnets, and route tables has been coded with Terraform.
-- **ECS cluster, task definitions, and services** infrastructure is managed with code.
-- **Automated infrastructure creation** with `terraform apply` is now possible, enabling reproducible environments without manual operations.
-
-**Current Work:** Preparing to start Phase 3 (Integration of Data and Network Layers).
-- Priority tasks include: Adding ElastiCache (Redis) and DynamoDB, introducing Application Load Balancer (ALB), and implementing precise access control with security groups.
+**Current Work:** Preparing to start Phase 4 (Building the CI/CD Pipeline).
+- Priority tasks include: Creating a GitHub Actions workflow, securely configuring AWS authentication with OIDC, and fully automating the build-to-deployment process triggered by `git push`.
 
 **Next Steps (Short-term):**
-1. Add ElastiCache (Redis) cluster and integrate with Colyseus for state management.
-2. Create DynamoDB tables and implement persistent data storage.
-3. Introduce Application Load Balancer and build secure public endpoints.
+1. Create a GitHub Actions workflow and configure secure AWS authentication using OIDC.
+2. Automate application building, testing, and pushing the Docker image.
+3. Build a pipeline that automatically applies Terraform changes and updates the ECS service, triggered by a merge to the `main` branch.
 
 ---
 
